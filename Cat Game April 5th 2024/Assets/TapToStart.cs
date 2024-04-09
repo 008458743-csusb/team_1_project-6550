@@ -1,26 +1,11 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class TapToStart : MonoBehaviour
+public class LoadGameButton : MonoBehaviour
 {
-    private bool gameStarted = false;
-
-    void Update()
+    public void LoadGameScene()
     {
-        // Check for tap or click input
-        if (Input.GetMouseButtonDown(0) && !gameStarted)
-        {
-            // The screen is tapped, start the game
-            StartGame();
-        }
-    }
-
-    void StartGame()
-    {
-        // Set a flag to prevent multiple taps
-        gameStarted = true;
-
-        // Load the next scene (replace "GameScene" with the name of your actual game scene)
+        // Load the "game" scene when the button is tapped
         SceneManager.LoadScene("game");
     }
 }

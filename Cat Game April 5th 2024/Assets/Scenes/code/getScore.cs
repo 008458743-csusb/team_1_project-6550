@@ -9,6 +9,7 @@ public class getScore : MonoBehaviour
     // Start is called before the first frame update
 
     public TextMeshProUGUI showScore;
+    private string userName;
     void Start()
     {
         Debug.Log("Inside getScore");
@@ -20,6 +21,9 @@ public class getScore : MonoBehaviour
             string filePath = Path.Combine(currentDirectory, "showScore.txt");
             string deviceID = SystemInfo.deviceUniqueIdentifier;
             Debug.Log("Device ID: " + deviceID);
+
+            string userProfilePath = Path.Combine(currentDirectory, "userProfile.txt");
+            GetUserName(userProfilePath, deviceID);
 
             if (File.Exists(filePath))
             {
@@ -55,5 +59,40 @@ public class getScore : MonoBehaviour
         {
             Debug.LogError("TextMeshProUGUI component is not assigned to the 'print' variable.");
         }
+    }
+
+    void GetUserName(string filePath, string searchDeviceID)
+    {
+        Debug.Log("Inside getScore");
+        // Initialize userName as "null" to ensure it has a value even if the file doesn't exist or the ID isn't found
+        userName = "null";
+
+        if (File.Exists(filePath))
+        {
+            string[] lines = File.ReadAllLines(filePath);
+            Debug.Log("Lines from userProfile: "+lines);
+
+            // Iterate through the file from the end using a reverse for loop
+            for (int i = lines.Length - 1; i >= 0; i--)
+            {
+                string line = lines[i];
+                // Split the data by commas
+                string[] data = line.Split(',');
+                if (data.Length == 2 && data[0].Trim() == searchDeviceID)
+                {
+                    // If the deviceID matches, set the userName variable
+                    userName = data[1].Trim();
+                    break; // Exit the loop after finding the match
+                }
+            }
+
+            Debug.Log("User name found: "+userName);
+        }
+        else
+        {
+            Debug.LogError("The 'userProfile.txt' file does not exist.");
+        }
+
+        // At this point, userName is either the name found in the file or "null"
     }
 }

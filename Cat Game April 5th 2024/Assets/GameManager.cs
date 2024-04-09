@@ -43,6 +43,7 @@ public class MathGame : MonoBehaviour
     private float startTime;
     private float endTime;
     private float totalTime;
+    private string userName;
 
 
     void Start()
@@ -168,6 +169,10 @@ public class MathGame : MonoBehaviour
                 string currentDirectory = Application.dataPath; // Assumes the code file is in the "Assets" directory
                 string filePath = Path.Combine(currentDirectory, "showScore.txt");
                 Debug.Log($"File Path: {filePath}");
+                
+                string userProfilePath = Path.Combine(currentDirectory, "userProfile.txt");
+                string deviceID = SystemInfo.deviceUniqueIdentifier;
+                GetUserName(userProfilePath, deviceID);
 
                 string csvContent = $"{totalQuestions},{correctAnswers},{accuracy:F2},{rate:F2}";
 
@@ -185,10 +190,10 @@ public class MathGame : MonoBehaviour
                 string currentDirectory1 = Application.dataPath; // Assumes the code file is in the "Assets" directory
                 string filePath1 = Path.Combine(currentDirectory1, "userProgress.txt");
                 Debug.Log($"File Path: {filePath1}");
-                string deviceID = SystemInfo.deviceUniqueIdentifier;
+                
                 Debug.Log("Device ID: " + deviceID);
 
-                string csvContent1 = $"{deviceID},{totalQuestions},{correctAnswers},{accuracy:F2},{rate:F2}\n"; // Add newline character
+                string csvContent1 = $"{deviceID},{userName},{totalQuestions},{correctAnswers},{accuracy:F2},{rate:F2}\n"; // Add newline character
 
                 try
                 {
@@ -452,5 +457,40 @@ public class MathGame : MonoBehaviour
                 Debug.LogWarning($"No start position for cat at index {i}, using cat's current position.");
             }
         }
+    }
+
+    void GetUserName(string filePath, string searchDeviceID)
+    {
+        Debug.Log("Inside getScore");
+        // Initialize userName as "null" to ensure it has a value even if the file doesn't exist or the ID isn't found
+        userName = "null";
+
+        if (File.Exists(filePath))
+        {
+            string[] lines = File.ReadAllLines(filePath);
+            Debug.Log("Lines from userProfile: "+lines);
+
+            // Iterate through the file from the end using a reverse for loop
+            for (int i = lines.Length - 1; i >= 0; i--)
+            {
+                string line = lines[i];
+                // Split the data by commas
+                string[] data = line.Split(',');
+                if (data.Length == 2 && data[0].Trim() == searchDeviceID)
+                {
+                    // If the deviceID matches, set the userName variable
+                    userName = data[1].Trim();
+                    break; // Exit the loop after finding the match
+                }
+            }
+
+            Debug.Log("User name found: "+userName);
+        }
+        else
+        {
+            Debug.LogError("The 'userProfile.txt' file does not exist.");
+        }
+
+        // At this point, userName is either the name found in the file or "null"
     }
 }
