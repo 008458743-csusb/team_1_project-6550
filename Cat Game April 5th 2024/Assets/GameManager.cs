@@ -44,6 +44,7 @@ public class MathGame : MonoBehaviour
     private float endTime;
     private float totalTime;
     private string userName;
+    private bool buttonsRespondingToInput = true; // Flag to track whether buttons should respond to input
 
 
     void Start()
@@ -118,6 +119,9 @@ public class MathGame : MonoBehaviour
                 quizCompleted = true;
                 LoadShowScoreScene();// Load the "showScore" scene
             }
+
+            // Reset the flag to allow button input for the new question
+            SetButtonsRespondingToInput(true);
 
             // List to store wrong answers
             List<int> wrongAnswers = new List<int>();
@@ -217,21 +221,33 @@ public class MathGame : MonoBehaviour
 
     void CorrectAnswer()
     {
+        if (!buttonsRespondingToInput)
+            return;
         Debug.Log("Correct!");
         correctAnswers++;
         HighlightButton(correctButton, correctButtonColor);
         StartCoroutine(ShowPrompt(correctAnswerPrompt));
         correctAnswerSound.Play();
+        buttonsRespondingToInput = false; // Disable further button input
     }
 
     void WrongAnswer()
     {
+        if (!buttonsRespondingToInput)
+            return;
         Debug.Log("Wrong!");
         HighlightButton(correctButton, correctButtonColor);
         Button incorrectButton = (Button)UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
         HighlightButton(incorrectButton, incorrectButtonColor);
         StartCoroutine(ShowPrompt(wrongAnswerPrompt));
         wrongAnswerSound.Play();
+        buttonsRespondingToInput = false; // Disable further button input
+    }
+
+    // Helper method to enable/disable button input
+    void SetButtonsRespondingToInput(bool responding)
+    {
+        buttonsRespondingToInput = responding;
     }
 
     void HighlightButton(Button button, Color color)
