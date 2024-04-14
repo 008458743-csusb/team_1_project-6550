@@ -206,8 +206,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1969825394}
-        m_TargetAssemblyTypeName: OnClickProgress, Assembly-CSharp
+      - m_Target: {fileID: 1969825392}
+        m_TargetAssemblyTypeName: MathGame, Assembly-CSharp
         m_MethodName: Quit
         m_Mode: 1
         m_Arguments:
