@@ -206,8 +206,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1969825394}
-        m_TargetAssemblyTypeName: OnClickProgress, Assembly-CSharp
+      - m_Target: {fileID: 1969825392}
+        m_TargetAssemblyTypeName: MathGame, Assembly-CSharp
         m_MethodName: Quit
         m_Mode: 1
         m_Arguments:
@@ -1606,7 +1606,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: d4c2e94991200fd4191b4fb7f6e561b2, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 94ecf0b65ecb13f439178df01387ba59, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -1872,7 +1872,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: cf7af22eb90da9e428d58fe3d49f976a, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 4ab76bf6845de2749a3300c8cf0936fc, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -2299,8 +2299,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -787.01984, y: 1750.6}
-  m_SizeDelta: {x: 480, y: 350}
+  m_AnchoredPosition: {x: -804.23224, y: 1728.8663}
+  m_SizeDelta: {x: 414.1006, y: 400.4341}
   m_Pivot: {x: 0.28284675, y: 0.5}
 --- !u!114 &958616275
 MonoBehaviour:
