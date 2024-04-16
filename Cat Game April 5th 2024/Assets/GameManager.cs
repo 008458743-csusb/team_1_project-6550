@@ -26,6 +26,8 @@ public class MathGame : MonoBehaviour
     public GameObject catContainer; // Animation Functionality: Assign this in the Inspector
     public AudioSource correctAnswerSound;
     public AudioSource wrongAnswerSound;
+    public GameObject HappyCat;
+    public GameObject SadCat;
 
 
     private Button correctButton;
@@ -50,6 +52,8 @@ public class MathGame : MonoBehaviour
 
     void Start()
     {
+        HappyCat.SetActive(false);
+        SadCat.SetActive(false);
         startTime = Time.time;
         InitializeCatsAtStartPositions();
         GenerateQuestion();
@@ -69,6 +73,8 @@ public class MathGame : MonoBehaviour
      } */
     void DisplayCatsForQuestion(int num1, int num2)
     {
+        HappyCat.SetActive(false);//hiding cat gifs initially
+        SadCat.SetActive(false);
         // Deactivate all cats initially
         foreach (GameObject cat in catUnits)
         {
@@ -237,6 +243,8 @@ public class MathGame : MonoBehaviour
 
     void CorrectAnswer()
     {
+        HappyCat.SetActive(true);
+        SadCat.SetActive(false);
         if (!buttonsRespondingToInput)
             return;
         Debug.Log("Correct!");
@@ -249,6 +257,8 @@ public class MathGame : MonoBehaviour
 
     void WrongAnswer()
     {
+        HappyCat.SetActive(false);
+        SadCat.SetActive(true);
         if (!buttonsRespondingToInput)
             return;
         Debug.Log("Wrong!");
