@@ -7,6 +7,7 @@ using TMPro;
 using System;
 using System.IO; // Added for file I/O
 using ClassLibrary1;
+using System.Security.Cryptography;
 
 public class MathGame : MonoBehaviour
 {
@@ -74,16 +75,31 @@ public class MathGame : MonoBehaviour
             cat.SetActive(false);
         }
 
-        // Activate the first row of cats based on num1
-        for (int i = 0; i < num1 && i < 5; i++)
+        // Calculate the index offsets for each row
+        int row1Offset = 0;       // Start of the first row
+        int row2Offset = 4;       // Start of the second row
+        int row3Offset = 8;       // Start of the third row
+
+        // We need to distribute num1 over the first two rows (8 cats max)
+        int num1FirstRow = Mathf.Min(num1, 4);  // Cats in the first row
+        int num1SecondRow = Mathf.Max(0, num1 - 4);  // Remaining cats in the second row
+
+        // Activate cats based on num1 for the first row
+        for (int i = 0; i < num1FirstRow; i++)
         {
-            catUnits[i].SetActive(true);
+            catUnits[row1Offset + i].SetActive(true);
         }
 
-        // Activate the second row of cats based on num2
-        for (int i = 5; i < 5 + num2 && i < catUnits.Length; i++)
+        // Activate cats based on remaining num1 for the second row
+        for (int i = 0; i < num1SecondRow; i++)
         {
-            catUnits[i].SetActive(true);
+            catUnits[row2Offset + i].SetActive(true);
+        }
+
+        // Activate cats based on num2 for the third row
+        for (int i = 0; i < num2 && i < 4; i++)
+        {
+            catUnits[row3Offset + i].SetActive(true);
         }
     }
 
@@ -389,11 +405,12 @@ public class MathGame : MonoBehaviour
     // Added animation functionality starts here 
     void Update()
     {
-        if (!gamePaused && !quizCompleted)
+        for (int i = 0; i < catUnits.Length; i++)
         {
-            for (int i = 0; i < catUnits.Length; i++)
+            GameObject cat = catUnits[i];
+            if (!gamePaused && !quizCompleted && cat.activeSelf)
             {
-                MoveCatToTarget(i); 
+                MoveCatToTarget(i);
             }
         }
     }
