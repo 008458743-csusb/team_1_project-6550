@@ -84,7 +84,7 @@ public class LoadingScreenManager : MonoBehaviour
 
     void UpdateColoredSquareColor(float timeRemaining)
     {
-        float colorChangeDuration = 1f;
+        //float colorChangeDuration = 1f;
         float progress = 1f - (timeRemaining / countdownDuration);
         float hue = Mathf.Lerp(240, 360, progress); // Interpolate between blue (240) and red (360)
         coloredSquare.GetComponent<Image>().color = Color.HSVToRGB(hue / 360f, 1f, 1f);
