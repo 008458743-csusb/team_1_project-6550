@@ -27,6 +27,8 @@ public class MathGame : MonoBehaviour
     public AudioSource correctAnswerSound;
     public AudioSource wrongAnswerSound;
     public GameObject[] allCats;
+    public GameObject HappyCat_0;
+    public GameObject SadCat_0;
 
 
     private Button correctButton;
@@ -39,7 +41,7 @@ public class MathGame : MonoBehaviour
     private bool quizCompleted = false;
     private bool gamePaused = false; // Add variable to track game pause state
     private int correctAnswers = 0;
-    private int totalQuestions = 3;
+    private int totalQuestions = 5;
     private float rate;
     private float accuracy;
     private float startTime;
@@ -110,6 +112,8 @@ public class MathGame : MonoBehaviour
 
         if (!quizCompleted && !gamePaused) // Check if the quiz is not completed and the game is not paused
         {
+            HappyCat_0.SetActive(false);
+            SadCat_0.SetActive(false);
             //ResetCatPositionsAndAnimations(); // Animation functionality 
             // Increment question counter
             questionCounter++;
@@ -248,6 +252,7 @@ public class MathGame : MonoBehaviour
         StartCoroutine(ShowPrompt(correctAnswerPrompt));
         correctAnswerSound.Play();
         buttonsRespondingToInput = false; // Disable further button input
+        HappyCat_0.SetActive(true);
     }
 
     void WrongAnswer()
@@ -261,6 +266,7 @@ public class MathGame : MonoBehaviour
         StartCoroutine(ShowPrompt(wrongAnswerPrompt));
         wrongAnswerSound.Play();
         buttonsRespondingToInput = false; // Disable further button input
+        SadCat_0.SetActive(true);
     }
 
     // Helper method to enable/disable button input
