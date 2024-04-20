@@ -308,7 +308,8 @@ public class MathGame : MonoBehaviour
         Blurbackground.SetActive(true);
 
         // Deactivate cats directly in this method
-        foreach (GameObject cat in catUnits)
+        //foreach (GameObject cat in catUnits)
+        foreach (GameObject cat in allCats)
         {
             // Directly disable the SpriteRenderer component
             SpriteRenderer catSprite = cat.GetComponent<SpriteRenderer>();
@@ -341,7 +342,8 @@ public class MathGame : MonoBehaviour
 
     void ReactivateCats()
     {
-        foreach (GameObject cat in catUnits)
+        //foreach (GameObject cat in catUnits)
+        foreach (GameObject cat in allCats)
         {
             // Re-enable the SpriteRenderer component
             SpriteRenderer catSprite = cat.GetComponent<SpriteRenderer>();
@@ -371,7 +373,8 @@ public class MathGame : MonoBehaviour
         Time.timeScale = 1f;
         Blurbackground.SetActive(false);
 
-        foreach (GameObject cat in catUnits)
+        //foreach (GameObject cat in catUnits)
+        foreach (GameObject cat in allCats)
         {
             cat.SetActive(false); // Ensure cats start from a deactivated state for consistency
         }
