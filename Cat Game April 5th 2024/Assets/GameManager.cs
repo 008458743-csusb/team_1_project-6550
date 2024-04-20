@@ -26,6 +26,7 @@ public class MathGame : MonoBehaviour
     public GameObject catContainer; // Animation Functionality: Assign this in the Inspector
     public AudioSource correctAnswerSound;
     public AudioSource wrongAnswerSound;
+    public GameObject[] allCats;
 
 
     private Button correctButton;
@@ -50,8 +51,9 @@ public class MathGame : MonoBehaviour
 
     void Start()
     {
-        startTime = Time.time;
-        InitializeCatsAtStartPositions();
+        //startTime = Time.time;
+        //InitializeCatsAtStartPositions();
+        InitializeCats();
         GenerateQuestion();
     }
 
@@ -108,7 +110,7 @@ public class MathGame : MonoBehaviour
 
         if (!quizCompleted && !gamePaused) // Check if the quiz is not completed and the game is not paused
         {
-            ResetCatPositionsAndAnimations(); // Animation functionality 
+            //ResetCatPositionsAndAnimations(); // Animation functionality 
             // Increment question counter
             questionCounter++;
 
@@ -120,7 +122,8 @@ public class MathGame : MonoBehaviour
             BasicMathsFunctions math = new BasicMathsFunctions(); // Instantiate BasicMathsFunctions from NuGet package
             int answer = (int)math.Addition(num1, num2); // Call the Addition method and cast the result to int
 
-            DisplayCatsForQuestion(num1, num2);
+            //DisplayCatsForQuestion(num1, num2);
+            ActivateCats(num1, num2);
 
             if (questionCounter <= totalQuestions)
             {
@@ -525,5 +528,42 @@ public class MathGame : MonoBehaviour
         }
 
         // At this point, userName is either the name found in the file or "null"
+    }
+    void InitializeCats()
+    {
+        foreach (GameObject cat in allCats)
+        {
+            cat.SetActive(false); // Start with all cats deactivated
+        }
+    }
+    public void UpdateCatSpawnBasedOnQuestion(string questionText)
+    {
+        // Example questionText: "6 + 3 = ?"
+        string[] parts = questionText.Split(' ');
+        int firstNumber = int.Parse(parts[0]); // This is '6' from the example
+        int secondNumber = int.Parse(parts[2]); // This is '3' from the example
+
+        ActivateCats(firstNumber, secondNumber);
+    }
+    void ActivateCats(int countTop, int countBottom)
+    {
+        InitializeCats(); // Deactivate all cats to start fresh each time
+
+        // Activate the top row cats for the first number
+        for (int i = 0; i < countTop && i < 6; i++) // Ensure it does not exceed the top row count
+        {
+            allCats[i].SetActive(true);
+        }
+
+        // Activate the bottom row cats for the second number
+        int startBottomIndex = 6; // Start from CatAnimation_0 (6)
+        for (int i = 0; i < countBottom && i < 3; i++) // Ensure it does not exceed the bottom row count
+        {
+            int index = startBottomIndex + i;
+            if (index < allCats.Length)
+            {
+                allCats[index].SetActive(true); // Activates CatAnimation_0 (6) to CatAnimation_0 (8)
+            }
+        }
     }
 }
