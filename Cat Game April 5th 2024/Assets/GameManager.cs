@@ -10,6 +10,7 @@ using ClassLibrary1;
 using System.Security.Cryptography;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Pcg;
 
 public class MathGame : MonoBehaviour
 {
@@ -51,10 +52,11 @@ public class MathGame : MonoBehaviour
     private float totalTime;
     private string userName;
     private bool buttonsRespondingToInput = true; // Flag to track whether buttons should respond to input
-
+    private PcgRandom randomGenerator;
 
     void Start()
     {
+        randomGenerator = new PcgRandom(); // Initialize the PcgRandom generator 
         //startTime = Time.time;
         //InitializeCatsAtStartPositions();
         InitializeCats();
@@ -121,8 +123,12 @@ public class MathGame : MonoBehaviour
             questionCounter++;
 
             // Generate random numbers for the addition question
-            int num1 = UnityEngine.Random.Range(1, 6); // Change the range as per your requirement
-            int num2 = UnityEngine.Random.Range(1, 3);
+            int num1 = randomGenerator.Next(1, 6); // Generates a random number between 1 and 5 
+            int num2 = randomGenerator.Next(1, 3); // Generates a random number between 1 and 2
+
+            
+            //int num1 = UnityEngine.Random.Range(1, 6); // Change the range as per your requirement
+            //int num2 = UnityEngine.Random.Range(1, 3);
 
             //int answer = num1 + num2;
             BasicMathsFunctions math = new BasicMathsFunctions(); // Instantiate BasicMathsFunctions from NuGet package
