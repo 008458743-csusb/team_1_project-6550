@@ -8,6 +8,8 @@ using System;
 using System.IO; // Added for file I/O
 using ClassLibrary1;
 using System.Security.Cryptography;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 public class MathGame : MonoBehaviour
 {
@@ -196,7 +198,7 @@ public class MathGame : MonoBehaviour
                 string currentDirectory = Application.dataPath; // Assumes the code file is in the "Assets" directory
                 string filePath = Path.Combine(currentDirectory, "showScore.txt");
                 Debug.Log($"File Path: {filePath}");
-                
+
                 string userProfilePath = Path.Combine(currentDirectory, "userProfile.txt");
                 string deviceID = SystemInfo.deviceUniqueIdentifier;
                 GetUserName(userProfilePath, deviceID);
@@ -217,7 +219,7 @@ public class MathGame : MonoBehaviour
                 string currentDirectory1 = Application.dataPath; // Assumes the code file is in the "Assets" directory
                 string filePath1 = Path.Combine(currentDirectory1, "userProgress.txt");
                 Debug.Log($"File Path: {filePath1}");
-                
+
                 Debug.Log("Device ID: " + deviceID);
 
                 string csvContent1 = $"{deviceID},{userName},{totalQuestions},{correctAnswers},{accuracy:F2},{rate:F2}\n"; // Add newline character
@@ -231,8 +233,36 @@ public class MathGame : MonoBehaviour
                     Debug.LogError($"Error writing to file: {e.Message}");
                 }
 
+                SendProgressData();
+
                 //LoadShowScoreScene(); // Load the "showScore" scene
                 //Moving it out of if block
+            }
+        }
+    }
+
+    private async Task SendProgressData()
+    {
+        string deviceID = SystemInfo.deviceUniqueIdentifier;
+        string code = "tAyYdMOMtdfKtuFfjrEpaO_bsqRM6JcCtDGpB3VRFV6OAzFujEw6fw==";
+        string url = $"https://test1-mathgame.azurewebsites.net/api/game/progress?code={code}&device_id={deviceID}&username={userName}&questions={totalQuestions}&correct_answers={correctAnswers}&accuracy={accuracy:F2}&rate={rate:F2}";
+
+        using (HttpClient client = new HttpClient())
+        {
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
+            HttpResponseMessage response = await client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            string responseString = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                responseString = await response.Content.ReadAsStringAsync();
+                Debug.Log("Progress data sent: " + responseString);
+            }
+            else
+            {
+                string errorResponse = await response.Content.ReadAsStringAsync();
+                Debug.LogError($"Failed to send progress data: {response.StatusCode} - {errorResponse}");
             }
         }
     }
@@ -481,7 +511,7 @@ public class MathGame : MonoBehaviour
 
     private IEnumerator MoveCatOffScreen(Transform catTransform)
     {
-        Vector3 offScreenPosition = new Vector3(-10f, 0f, 0f); 
+        Vector3 offScreenPosition = new Vector3(-10f, 0f, 0f);
         while (catTransform.position.x != offScreenPosition.x)
         {
             catTransform.position = Vector3.MoveTowards(catTransform.position, offScreenPosition, speed * Time.deltaTime);
@@ -513,7 +543,7 @@ public class MathGame : MonoBehaviour
         if (File.Exists(filePath))
         {
             string[] lines = File.ReadAllLines(filePath);
-            Debug.Log("Lines from userProfile: "+lines);
+            Debug.Log("Lines from userProfile: " + lines);
 
             // Iterate through the file from the end using a reverse for loop
             for (int i = lines.Length - 1; i >= 0; i--)
@@ -529,7 +559,7 @@ public class MathGame : MonoBehaviour
                 }
             }
 
-            Debug.Log("User name found: "+userName);
+            Debug.Log("User name found: " + userName);
         }
         else
         {
