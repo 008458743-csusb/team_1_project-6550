@@ -4,6 +4,8 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 public class readInput : MonoBehaviour
 {
@@ -24,7 +26,7 @@ public class readInput : MonoBehaviour
         WriteToFile();
     }
 
-    private void WriteToFile()
+    private async void WriteToFile()
     {
         // Path to the file
         string currentDirectory = Application.dataPath; // Assumes the code file is in the "Assets" directory
@@ -37,7 +39,36 @@ public class readInput : MonoBehaviour
             sw.WriteLine(deviceID + "," + input);
         }
 
+        await SendDataToAPI();
+
         // Log to debug that the file has been written
         Debug.Log("File written with Device ID and User Input.");
+    }
+
+    private async Task SendDataToAPI()
+    {
+        string code = "TIW2z6W5irePx4PwY0CHfxh_JfDnX_4uwWzrdy57jpmNAzFunro6UQ==";
+        string url = $"https://test1-mathgame.azurewebsites.net/api/game/create?code={code}&device_id={deviceID}&username={input}";
+
+        using (HttpClient client = new HttpClient())
+        {
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
+            HttpResponseMessage response = await client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            string responseString = await response.Content.ReadAsStringAsync();
+            Debug.Log("Progress data sent: " + responseString);
+
+            if (response.IsSuccessStatusCode)
+            {
+                responseString = await response.Content.ReadAsStringAsync();
+                Debug.Log("Progress data sent: " + responseString);
+            }
+            else
+            {
+                string errorResponse = await response.Content.ReadAsStringAsync();
+                Debug.LogError($"Failed to send progress data: {response.StatusCode} - {errorResponse}");
+            }
+        }
+
     }
 }

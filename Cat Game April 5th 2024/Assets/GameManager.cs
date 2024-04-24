@@ -8,6 +8,9 @@ using System;
 using System.IO; // Added for file I/O
 using ClassLibrary1;
 using System.Security.Cryptography;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Pcg;
 
 public class MathGame : MonoBehaviour
 {
@@ -26,6 +29,9 @@ public class MathGame : MonoBehaviour
     public GameObject catContainer; // Animation Functionality: Assign this in the Inspector
     public AudioSource correctAnswerSound;
     public AudioSource wrongAnswerSound;
+    public GameObject[] allCats;
+    public GameObject HappyCat_0;
+    public GameObject SadCat_0;
 
 
     private Button correctButton;
@@ -38,7 +44,7 @@ public class MathGame : MonoBehaviour
     private bool quizCompleted = false;
     private bool gamePaused = false; // Add variable to track game pause state
     private int correctAnswers = 0;
-    private int totalQuestions = 3;
+    private int totalQuestions = 5;
     private float rate;
     private float accuracy;
     private float startTime;
@@ -46,12 +52,14 @@ public class MathGame : MonoBehaviour
     private float totalTime;
     private string userName;
     private bool buttonsRespondingToInput = true; // Flag to track whether buttons should respond to input
-
+    private PcgRandom randomGenerator;
 
     void Start()
     {
-        startTime = Time.time;
-        InitializeCatsAtStartPositions();
+        randomGenerator = new PcgRandom(); // Initialize the PcgRandom generator 
+        //startTime = Time.time;
+        //InitializeCatsAtStartPositions();
+        InitializeCats();
         GenerateQuestion();
     }
 
@@ -108,19 +116,26 @@ public class MathGame : MonoBehaviour
 
         if (!quizCompleted && !gamePaused) // Check if the quiz is not completed and the game is not paused
         {
-            ResetCatPositionsAndAnimations(); // Animation functionality 
+            HappyCat_0.SetActive(false);
+            SadCat_0.SetActive(false);
+            //ResetCatPositionsAndAnimations(); // Animation functionality 
             // Increment question counter
             questionCounter++;
 
             // Generate random numbers for the addition question
-            int num1 = UnityEngine.Random.Range(1, 5); // Change the range as per your requirement
-            int num2 = UnityEngine.Random.Range(1, 5);
+            int num1 = randomGenerator.Next(1, 6); // Generates a random number between 1 and 5 
+            int num2 = randomGenerator.Next(1, 3); // Generates a random number between 1 and 2
+
+            
+            //int num1 = UnityEngine.Random.Range(1, 6); // Change the range as per your requirement
+            //int num2 = UnityEngine.Random.Range(1, 3);
 
             //int answer = num1 + num2;
             BasicMathsFunctions math = new BasicMathsFunctions(); // Instantiate BasicMathsFunctions from NuGet package
             int answer = (int)math.Addition(num1, num2); // Call the Addition method and cast the result to int
 
-            DisplayCatsForQuestion(num1, num2);
+            //DisplayCatsForQuestion(num1, num2);
+            ActivateCats(num1, num2);
 
             if (questionCounter <= totalQuestions)
             {
@@ -189,7 +204,7 @@ public class MathGame : MonoBehaviour
                 string currentDirectory = Application.dataPath; // Assumes the code file is in the "Assets" directory
                 string filePath = Path.Combine(currentDirectory, "showScore.txt");
                 Debug.Log($"File Path: {filePath}");
-                
+
                 string userProfilePath = Path.Combine(currentDirectory, "userProfile.txt");
                 string deviceID = SystemInfo.deviceUniqueIdentifier;
                 GetUserName(userProfilePath, deviceID);
@@ -210,7 +225,7 @@ public class MathGame : MonoBehaviour
                 string currentDirectory1 = Application.dataPath; // Assumes the code file is in the "Assets" directory
                 string filePath1 = Path.Combine(currentDirectory1, "userProgress.txt");
                 Debug.Log($"File Path: {filePath1}");
-                
+
                 Debug.Log("Device ID: " + deviceID);
 
                 string csvContent1 = $"{deviceID},{userName},{totalQuestions},{correctAnswers},{accuracy:F2},{rate:F2}\n"; // Add newline character
@@ -224,8 +239,36 @@ public class MathGame : MonoBehaviour
                     Debug.LogError($"Error writing to file: {e.Message}");
                 }
 
+                SendProgressData();
+
                 //LoadShowScoreScene(); // Load the "showScore" scene
                 //Moving it out of if block
+            }
+        }
+    }
+
+    private async Task SendProgressData()
+    {
+        string deviceID = SystemInfo.deviceUniqueIdentifier;
+        string code = "tAyYdMOMtdfKtuFfjrEpaO_bsqRM6JcCtDGpB3VRFV6OAzFujEw6fw==";
+        string url = $"https://test1-mathgame.azurewebsites.net/api/game/progress?code={code}&device_id={deviceID}&username={userName}&questions={totalQuestions}&correct_answers={correctAnswers}&accuracy={accuracy:F2}&rate={rate:F2}";
+
+        using (HttpClient client = new HttpClient())
+        {
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
+            HttpResponseMessage response = await client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            string responseString = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                responseString = await response.Content.ReadAsStringAsync();
+                Debug.Log("Progress data sent: " + responseString);
+            }
+            else
+            {
+                string errorResponse = await response.Content.ReadAsStringAsync();
+                Debug.LogError($"Failed to send progress data: {response.StatusCode} - {errorResponse}");
             }
         }
     }
@@ -245,6 +288,7 @@ public class MathGame : MonoBehaviour
         StartCoroutine(ShowPrompt(correctAnswerPrompt));
         correctAnswerSound.Play();
         buttonsRespondingToInput = false; // Disable further button input
+        HappyCat_0.SetActive(true);
     }
 
     void WrongAnswer()
@@ -258,6 +302,7 @@ public class MathGame : MonoBehaviour
         StartCoroutine(ShowPrompt(wrongAnswerPrompt));
         wrongAnswerSound.Play();
         buttonsRespondingToInput = false; // Disable further button input
+        SadCat_0.SetActive(true);
     }
 
     // Helper method to enable/disable button input
@@ -305,7 +350,8 @@ public class MathGame : MonoBehaviour
         Blurbackground.SetActive(true);
 
         // Deactivate cats directly in this method
-        foreach (GameObject cat in catUnits)
+        //foreach (GameObject cat in catUnits)
+        foreach (GameObject cat in allCats)
         {
             // Directly disable the SpriteRenderer component
             SpriteRenderer catSprite = cat.GetComponent<SpriteRenderer>();
@@ -338,7 +384,8 @@ public class MathGame : MonoBehaviour
 
     void ReactivateCats()
     {
-        foreach (GameObject cat in catUnits)
+        //foreach (GameObject cat in catUnits)
+        foreach (GameObject cat in allCats)
         {
             // Re-enable the SpriteRenderer component
             SpriteRenderer catSprite = cat.GetComponent<SpriteRenderer>();
@@ -368,7 +415,8 @@ public class MathGame : MonoBehaviour
         Time.timeScale = 1f;
         Blurbackground.SetActive(false);
 
-        foreach (GameObject cat in catUnits)
+        //foreach (GameObject cat in catUnits)
+        foreach (GameObject cat in allCats)
         {
             cat.SetActive(false); // Ensure cats start from a deactivated state for consistency
         }
@@ -469,7 +517,7 @@ public class MathGame : MonoBehaviour
 
     private IEnumerator MoveCatOffScreen(Transform catTransform)
     {
-        Vector3 offScreenPosition = new Vector3(-10f, 0f, 0f); 
+        Vector3 offScreenPosition = new Vector3(-10f, 0f, 0f);
         while (catTransform.position.x != offScreenPosition.x)
         {
             catTransform.position = Vector3.MoveTowards(catTransform.position, offScreenPosition, speed * Time.deltaTime);
@@ -501,7 +549,7 @@ public class MathGame : MonoBehaviour
         if (File.Exists(filePath))
         {
             string[] lines = File.ReadAllLines(filePath);
-            Debug.Log("Lines from userProfile: "+lines);
+            Debug.Log("Lines from userProfile: " + lines);
 
             // Iterate through the file from the end using a reverse for loop
             for (int i = lines.Length - 1; i >= 0; i--)
@@ -517,7 +565,7 @@ public class MathGame : MonoBehaviour
                 }
             }
 
-            Debug.Log("User name found: "+userName);
+            Debug.Log("User name found: " + userName);
         }
         else
         {
@@ -525,5 +573,42 @@ public class MathGame : MonoBehaviour
         }
 
         // At this point, userName is either the name found in the file or "null"
+    }
+    void InitializeCats()
+    {
+        foreach (GameObject cat in allCats)
+        {
+            cat.SetActive(false); // Start with all cats deactivated
+        }
+    }
+    public void UpdateCatSpawnBasedOnQuestion(string questionText)
+    {
+        // Example questionText: "6 + 3 = ?"
+        string[] parts = questionText.Split(' ');
+        int firstNumber = int.Parse(parts[0]); // This is '6' from the example
+        int secondNumber = int.Parse(parts[2]); // This is '3' from the example
+
+        ActivateCats(firstNumber, secondNumber);
+    }
+    void ActivateCats(int countTop, int countBottom)
+    {
+        InitializeCats(); // Deactivate all cats to start fresh each time
+
+        // Activate the top row cats for the first number
+        for (int i = 0; i < countTop && i < 6; i++) // Ensure it does not exceed the top row count
+        {
+            allCats[i].SetActive(true);
+        }
+
+        // Activate the bottom row cats for the second number
+        int startBottomIndex = 6; // Start from CatAnimation_0 (6)
+        for (int i = 0; i < countBottom && i < 3; i++) // Ensure it does not exceed the bottom row count
+        {
+            int index = startBottomIndex + i;
+            if (index < allCats.Length)
+            {
+                allCats[index].SetActive(true); // Activates CatAnimation_0 (6) to CatAnimation_0 (8)
+            }
+        }
     }
 }
