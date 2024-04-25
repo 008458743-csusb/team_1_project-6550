@@ -35,7 +35,7 @@ public class IntroductionController : MonoBehaviour
             devTeamText.enabled = true;
 
             // Start loading the next scene asynchronously
-            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("main");
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("LoadingScreen");
             asyncLoad.allowSceneActivation = false; // Prevent automatic scene activation
 
             // Wait for a delay before transitioning to the next scene

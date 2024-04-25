@@ -373,7 +373,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Cat Math Addition
+  m_Text: Purrfect Addition
 --- !u!222 &200729488
 CanvasRenderer:
   m_ObjectHideFlags: 0
