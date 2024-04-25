@@ -29,7 +29,7 @@ public class readInput : MonoBehaviour
     private async void WriteToFile()
     {
         // Path to the file
-        string currentDirectory = Application.dataPath; // Assumes the code file is in the "Assets" directory
+        string currentDirectory = Application.persistentDataPath; // Assumes the code file is in the "Assets" directory
         string path = Path.Combine(currentDirectory, "userProfile.txt");
         Debug.Log($"File Path: {path}");
 

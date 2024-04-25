@@ -201,7 +201,7 @@ public class MathGame : MonoBehaviour
                 accuracy = Mathf.Round(accuracy * 100) / 100; // Round accuracy to two decimal places
                 rate = (totalQuestions / totalTime) * 60f;
 
-                string currentDirectory = Application.dataPath; // Assumes the code file is in the "Assets" directory
+                string currentDirectory = Application.persistentDataPath; // Assumes the code file is in the "Assets" directory
                 string filePath = Path.Combine(currentDirectory, "showScore.txt");
                 Debug.Log($"File Path: {filePath}");
 
@@ -222,7 +222,7 @@ public class MathGame : MonoBehaviour
 
                 // Code for user progress - written by Manish.
 
-                string currentDirectory1 = Application.dataPath; // Assumes the code file is in the "Assets" directory
+                string currentDirectory1 = Application.persistentDataPath; // Assumes the code file is in the "Assets" directory
                 string filePath1 = Path.Combine(currentDirectory1, "userProgress.txt");
                 Debug.Log($"File Path: {filePath1}");
 

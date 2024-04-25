@@ -22,12 +22,12 @@ public class DisplayLastFiveScores : MonoBehaviour
 
     private void DisplayScores()
     {
-        string filePath = Path.Combine(Application.dataPath, "userProgress.txt");
+        string filePath = Path.Combine(Application.persistentDataPath, "userProgress.txt");
 
         if (File.Exists(filePath))
         {
             string deviceID = SystemInfo.deviceUniqueIdentifier;
-            string currentDirectory = Application.dataPath;
+            string currentDirectory = Application.persistentDataPath;
             string userProfilePath = Path.Combine(currentDirectory, "userProfile.txt");
             GetUserName(userProfilePath, deviceID);
 
