@@ -31,7 +31,7 @@ public class MathGame : MonoBehaviour
     public AudioSource wrongAnswerSound;
     public GameObject[] allCats;
     public GameObject HappyCat_0;
-    public GameObject SadCat_0;
+    public GameObject SadCat_1;
 
 
     private Button correctButton;
@@ -117,7 +117,7 @@ public class MathGame : MonoBehaviour
         if (!quizCompleted && !gamePaused) // Check if the quiz is not completed and the game is not paused
         {
             HappyCat_0.SetActive(false);
-            SadCat_0.SetActive(false);
+            SadCat_1.SetActive(false);
             //ResetCatPositionsAndAnimations(); // Animation functionality 
             // Increment question counter
             questionCounter++;
@@ -302,7 +302,7 @@ public class MathGame : MonoBehaviour
         StartCoroutine(ShowPrompt(wrongAnswerPrompt));
         wrongAnswerSound.Play();
         buttonsRespondingToInput = false; // Disable further button input
-        SadCat_0.SetActive(true);
+        SadCat_1.SetActive(true);
     }
 
     // Helper method to enable/disable button input
