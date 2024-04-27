@@ -344,7 +344,7 @@ public class MathGame : MonoBehaviour
     {
         gamePaused = true;
         pauseMenu.SetActive(true);
-        problemQuestionCanvas.SetActive(false);
+        //problemQuestionCanvas.SetActive(false);
         Time.timeScale = 0f; // Effectively pauses the game
         SetButtonsInteractable(answerButtons, false);
         Blurbackground.SetActive(true);
