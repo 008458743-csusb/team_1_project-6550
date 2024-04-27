@@ -18,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &588905393537442555
 RectTransform:
   m_ObjectHideFlags: 0
@@ -98,10 +98,14 @@ MonoBehaviour:
   problemQuestionCanvas: {fileID: 0}
   catUnits: []
   startPositions: []
-  targetPosition: {x: 0, y: 0, z: 0}
-  speed: 5
-  catContainer: {fileID: 0}
   targetPositions:
   - {x: 1, y: 0, z: 0}
   - {x: 2, y: 0, z: 0}
   - {x: 3, y: 0, z: 0}
+  speed: 5
+  catContainer: {fileID: 0}
+  correctAnswerSound: {fileID: 0}
+  wrongAnswerSound: {fileID: 0}
+  allCats: []
+  HappyCat_0: {fileID: 0}
+  SadCat_1: {fileID: 0}
