@@ -15,8 +15,11 @@ public class GoogleMobileAdsDemoScript : MonoBehaviour
             CreateBannerView();
             LoadAd();
 
+
             // This callback is called once the MobileAds SDK is initialized.
         });
+
+        button.gameObject.SetActive(true);
 
         // Add listener to the button click event
         button.onClick.AddListener(OnButtonClick);
@@ -48,7 +51,6 @@ public class GoogleMobileAdsDemoScript : MonoBehaviour
 
         // Create a 320x50 banner at bottom of the screen
         _bannerView = new BannerView(_adUnitId, AdSize.Banner, AdPosition.Bottom);
-        button.gameObject.SetActive(true);
 
         ListenToAdEvents();
     }
