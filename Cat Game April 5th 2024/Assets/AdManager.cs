@@ -2,44 +2,51 @@ using UnityEngine;
 using UnityEngine.UI;
 using GoogleMobileAds.Api;
 using System;
+using UnityEngine.UIElements;
 
-public class GoogleMobileAdsDemoScript : MonoBehaviour
+public class AdManager : MonoBehaviour
 {
-    public Button button; // Reference to the button component
+    public static AdManager Instance { get; private set; }
 
-    public void Start()
+    private BannerView _bannerView;
+    private bool adEnabled = true; // Initially set to true
+
+    private void Awake()
     {
-        // Initialize the Google Mobile Ads SDK.
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    public void InitializeAd()
+    {
         MobileAds.Initialize((InitializationStatus initStatus) =>
         {
             CreateBannerView();
             LoadAd();
-
-
-            // This callback is called once the MobileAds SDK is initialized.
         });
-
-        button.gameObject.SetActive(true);
-
-        // Add listener to the button click event
-        button.onClick.AddListener(OnButtonClick);
     }
 
-    // These ad units are configured to always serve test ads.
-#if UNITY_ANDROID
-    private string _adUnitId = "ca-app-pub-3940256099942544/6300978111";//ca-app-pub-3940256099942544/6300978111
-#elif UNITY_IPHONE
-    private string _adUnitId = "ca-app-pub-3940256099942544/2934735716";
-#else
-    private string _adUnitId = "unused";
-#endif
+    public void ToggleAdVisibility()
+    {
+        adEnabled = !adEnabled;
+        if (adEnabled)
+        {
+            _bannerView.Show();
+        }
+        else
+        {
+            _bannerView.Hide();
+        }
+    }
 
-    BannerView _bannerView;
-
-    /// <summary>
-    /// Creates a 320x50 banner view at top of the screen.
-    /// </summary>
-    public void CreateBannerView()
+    private void CreateBannerView()
     {
         Debug.Log("Creating banner view");
 
@@ -50,15 +57,12 @@ public class GoogleMobileAdsDemoScript : MonoBehaviour
         }
 
         // Create a 320x50 banner at bottom of the screen
-        _bannerView = new BannerView(_adUnitId, AdSize.Banner, AdPosition.Bottom);
+        _bannerView = new BannerView("ca-app-pub-3940256099942544/6300978111", AdSize.Banner, AdPosition.Bottom);
 
         ListenToAdEvents();
     }
 
-    /// <summary>
-    /// Creates the banner view and loads a banner ad.
-    /// </summary>
-    public void LoadAd()
+    private void LoadAd()
     {
         // create an instance of a banner view first.
         if (_bannerView == null)
@@ -74,11 +78,10 @@ public class GoogleMobileAdsDemoScript : MonoBehaviour
         _bannerView.LoadAd(adRequest);
     }
 
-    /// <summary>
-    /// listen to events the banner view may raise.
-    /// </summary>
     private void ListenToAdEvents()
     {
+        // Event listeners for banner view events
+        // Add your event listeners here
         // Event listeners for banner view events
         _bannerView.OnBannerAdLoaded += () =>
         {
@@ -114,9 +117,6 @@ public class GoogleMobileAdsDemoScript : MonoBehaviour
         };
     }
 
-    /// <summary>
-    /// Destroys the banner view.
-    /// </summary>
     public void DestroyAd()
     {
         if (_bannerView != null)
@@ -125,15 +125,7 @@ public class GoogleMobileAdsDemoScript : MonoBehaviour
             _bannerView.Destroy();
             _bannerView = null;
 
-            // Disable the button after destroying the banner
-            button.gameObject.SetActive(false);
         }
     }
 
-    // Method to handle button click event
-    private void OnButtonClick()
-    {
-        DestroyAd();
-        gameObject.SetActive(false);
-    }
 }

@@ -442,7 +442,7 @@ public class MathGame : MonoBehaviour
         pauseMenu.SetActive(false); // Hide the pause menu panel
         Time.timeScale = 1f; // Restore normal time flow
 
-        SceneManager.LoadScene(0); // Load the main menu scene
+        SceneManager.LoadScene("LoadingScreen"); // Load the main menu scene
     }
     IEnumerator ShowPrompt(GameObject prompt)
     {

@@ -19,6 +19,9 @@ public class IntroductionController : MonoBehaviour
         appNameText.enabled = false;
         devTeamText.enabled = false;
 
+        // Initialize the ad banner
+        AdManager.Instance.InitializeAd();
+
         // Subscribe to the animation event to trigger when the symbol animation finishes
         AnimationEvent animationEvent = new AnimationEvent();
         animationEvent.functionName = "ShowText";
