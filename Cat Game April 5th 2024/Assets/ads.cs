@@ -48,6 +48,7 @@ public class GoogleMobileAdsDemoScript : MonoBehaviour
 
         // Create a 320x50 banner at bottom of the screen
         _bannerView = new BannerView(_adUnitId, AdSize.Banner, AdPosition.Bottom);
+        button.gameObject.SetActive(true);
 
         ListenToAdEvents();
     }

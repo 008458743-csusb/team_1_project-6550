@@ -54,6 +54,14 @@ public class MathGame : MonoBehaviour
     private bool buttonsRespondingToInput = true; // Flag to track whether buttons should respond to input
     private PcgRandom randomGenerator;
 
+    public AudioSource backgroundMusic; // Reference to the background music AudioSource
+    public Button musicToggleButton; // Reference to the button that toggles the background music
+    public Sprite musicOnSprite; // Sprite to display when music is on
+    public Sprite musicOffSprite; // Sprite to display when music is off
+
+    private bool isMusicOn = true; // Flag to track if music is currently playing
+    private float audioPausedTime; // Time at which audio was paused
+
     void Start()
     {
         randomGenerator = new PcgRandom(); // Initialize the PcgRandom generator 
@@ -61,6 +69,8 @@ public class MathGame : MonoBehaviour
         //InitializeCatsAtStartPositions();
         InitializeCats();
         GenerateQuestion();
+        UpdateMusicButtonSprite(); // Set the initial sprite and color of the button
+
     }
 
 
@@ -610,5 +620,26 @@ public class MathGame : MonoBehaviour
                 allCats[index].SetActive(true); // Activates CatAnimation_0 (6) to CatAnimation_0 (8)
             }
         }
+    }
+    public void ToggleBackgroundMusic()
+    {
+        if (isMusicOn)
+        {
+            backgroundMusic.Pause(); // Pause the music if it's currently playing
+            audioPausedTime = backgroundMusic.time; // Save the time at which audio was paused
+        }
+        else
+        {
+            backgroundMusic.UnPause(); // Unpause the music if it's currently paused
+            backgroundMusic.time = audioPausedTime; // Set the audio time to the time when it was paused
+        }
+
+        isMusicOn = !isMusicOn; // Toggle the music state
+        UpdateMusicButtonSprite(); // Update button sprite and color
+    }
+
+    void UpdateMusicButtonSprite()
+    {
+        musicToggleButton.image.sprite = isMusicOn ? musicOnSprite : musicOffSprite;
     }
 }
