@@ -22,20 +22,30 @@ public class DisplayLastFiveScores : MonoBehaviour
 
     private void DisplayScores()
     {
-        string filePath = Path.Combine(Application.dataPath, "userProgress.txt");
+        string filePath = Path.Combine(Application.persistentDataPath, "userProgress.txt");
 
         if (File.Exists(filePath))
         {
             string deviceID = SystemInfo.deviceUniqueIdentifier;
-            string currentDirectory = Application.dataPath;
+            string currentDirectory = Application.persistentDataPath;
             string userProfilePath = Path.Combine(currentDirectory, "userProfile.txt");
             GetUserName(userProfilePath, deviceID);
 
             var lines = File.ReadAllLines(filePath);
 
+            /* - uncomment if data needs to be filtered by userName and deviceId
             var matchingData = lines
             .Select(line => line.Split(','))
             .Where(data => data.Length > 2 && data[0].Trim() == deviceID && data[1].Trim() == userName)
+            .Reverse() // Reverse to get the last entries first
+            .Take(5) // Take only the last 5 entries
+            .Reverse() // Reverse again to display them in the original order
+            .ToList();
+            */
+
+            var matchingData = lines
+            .Select(line => line.Split(','))
+            .Where(data => data.Length > 1 && data[0].Trim() == deviceID)
             .Reverse() // Reverse to get the last entries first
             .Take(5) // Take only the last 5 entries
             .Reverse() // Reverse again to display them in the original order
@@ -75,7 +85,7 @@ public class DisplayLastFiveScores : MonoBehaviour
     {
         Debug.Log("Inside getScore");
         // Initialize userName as "null" to ensure it has a value even if the file doesn't exist or the ID isn't found
-        userName = "null";
+        userName = "User";
 
         if (File.Exists(filePath))
         {

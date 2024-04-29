@@ -31,7 +31,7 @@ public class MathGame : MonoBehaviour
     public AudioSource wrongAnswerSound;
     public GameObject[] allCats;
     public GameObject HappyCat_0;
-    public GameObject SadCat_0;
+    public GameObject SadCat_1;
 
 
     private Button correctButton;
@@ -54,6 +54,14 @@ public class MathGame : MonoBehaviour
     private bool buttonsRespondingToInput = true; // Flag to track whether buttons should respond to input
     private PcgRandom randomGenerator;
 
+    public AudioSource backgroundMusic; // Reference to the background music AudioSource
+    public Button musicToggleButton; // Reference to the button that toggles the background music
+    public Sprite musicOnSprite; // Sprite to display when music is on
+    public Sprite musicOffSprite; // Sprite to display when music is off
+
+    private bool isMusicOn = true; // Flag to track if music is currently playing
+    private float audioPausedTime; // Time at which audio was paused
+
     void Start()
     {
         randomGenerator = new PcgRandom(); // Initialize the PcgRandom generator 
@@ -61,6 +69,8 @@ public class MathGame : MonoBehaviour
         //InitializeCatsAtStartPositions();
         InitializeCats();
         GenerateQuestion();
+        UpdateMusicButtonSprite(); // Set the initial sprite and color of the button
+
     }
 
 
@@ -117,7 +127,7 @@ public class MathGame : MonoBehaviour
         if (!quizCompleted && !gamePaused) // Check if the quiz is not completed and the game is not paused
         {
             HappyCat_0.SetActive(false);
-            SadCat_0.SetActive(false);
+            SadCat_1.SetActive(false);
             //ResetCatPositionsAndAnimations(); // Animation functionality 
             // Increment question counter
             questionCounter++;
@@ -201,7 +211,7 @@ public class MathGame : MonoBehaviour
                 accuracy = Mathf.Round(accuracy * 100) / 100; // Round accuracy to two decimal places
                 rate = (totalQuestions / totalTime) * 60f;
 
-                string currentDirectory = Application.dataPath; // Assumes the code file is in the "Assets" directory
+                string currentDirectory = Application.persistentDataPath; // Assumes the code file is in the "Assets" directory
                 string filePath = Path.Combine(currentDirectory, "showScore.txt");
                 Debug.Log($"File Path: {filePath}");
 
@@ -222,7 +232,7 @@ public class MathGame : MonoBehaviour
 
                 // Code for user progress - written by Manish.
 
-                string currentDirectory1 = Application.dataPath; // Assumes the code file is in the "Assets" directory
+                string currentDirectory1 = Application.persistentDataPath; // Assumes the code file is in the "Assets" directory
                 string filePath1 = Path.Combine(currentDirectory1, "userProgress.txt");
                 Debug.Log($"File Path: {filePath1}");
 
@@ -302,7 +312,7 @@ public class MathGame : MonoBehaviour
         StartCoroutine(ShowPrompt(wrongAnswerPrompt));
         wrongAnswerSound.Play();
         buttonsRespondingToInput = false; // Disable further button input
-        SadCat_0.SetActive(true);
+        SadCat_1.SetActive(true);
     }
 
     // Helper method to enable/disable button input
@@ -344,7 +354,7 @@ public class MathGame : MonoBehaviour
     {
         gamePaused = true;
         pauseMenu.SetActive(true);
-        problemQuestionCanvas.SetActive(false);
+        //problemQuestionCanvas.SetActive(false);
         Time.timeScale = 0f; // Effectively pauses the game
         SetButtonsInteractable(answerButtons, false);
         Blurbackground.SetActive(true);
@@ -432,7 +442,7 @@ public class MathGame : MonoBehaviour
         pauseMenu.SetActive(false); // Hide the pause menu panel
         Time.timeScale = 1f; // Restore normal time flow
 
-        SceneManager.LoadScene(0); // Load the main menu scene
+        SceneManager.LoadScene("LoadingScreen"); // Load the main menu scene
     }
     IEnumerator ShowPrompt(GameObject prompt)
     {
@@ -610,5 +620,26 @@ public class MathGame : MonoBehaviour
                 allCats[index].SetActive(true); // Activates CatAnimation_0 (6) to CatAnimation_0 (8)
             }
         }
+    }
+    public void ToggleBackgroundMusic()
+    {
+        if (isMusicOn)
+        {
+            backgroundMusic.Pause(); // Pause the music if it's currently playing
+            audioPausedTime = backgroundMusic.time; // Save the time at which audio was paused
+        }
+        else
+        {
+            backgroundMusic.UnPause(); // Unpause the music if it's currently paused
+            backgroundMusic.time = audioPausedTime; // Set the audio time to the time when it was paused
+        }
+
+        isMusicOn = !isMusicOn; // Toggle the music state
+        UpdateMusicButtonSprite(); // Update button sprite and color
+    }
+
+    void UpdateMusicButtonSprite()
+    {
+        musicToggleButton.image.sprite = isMusicOn ? musicOnSprite : musicOffSprite;
     }
 }

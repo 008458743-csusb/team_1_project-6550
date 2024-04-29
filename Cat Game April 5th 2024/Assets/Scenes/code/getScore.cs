@@ -17,7 +17,7 @@ public class getScore : MonoBehaviour
         if (showScore != null)
         {
             // Read the contents of the "output.txt" file
-            string currentDirectory = Application.dataPath;
+            string currentDirectory = Application.persistentDataPath;
             string filePath = Path.Combine(currentDirectory, "showScore.txt");
             string deviceID = SystemInfo.deviceUniqueIdentifier;
             Debug.Log("Device ID: " + deviceID);

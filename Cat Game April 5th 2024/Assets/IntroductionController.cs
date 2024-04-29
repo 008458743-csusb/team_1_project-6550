@@ -19,6 +19,9 @@ public class IntroductionController : MonoBehaviour
         appNameText.enabled = false;
         devTeamText.enabled = false;
 
+        // Initialize the ad banner
+        AdManager.Instance.InitializeAd();
+
         // Subscribe to the animation event to trigger when the symbol animation finishes
         AnimationEvent animationEvent = new AnimationEvent();
         animationEvent.functionName = "ShowText";
@@ -35,7 +38,7 @@ public class IntroductionController : MonoBehaviour
             devTeamText.enabled = true;
 
             // Start loading the next scene asynchronously
-            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("main");
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("LoadingScreen");
             asyncLoad.allowSceneActivation = false; // Prevent automatic scene activation
 
             // Wait for a delay before transitioning to the next scene
